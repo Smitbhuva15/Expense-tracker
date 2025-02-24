@@ -1,49 +1,23 @@
 "use client"
 import { addCommas } from '@/db/utill';
-import React, { useEffect, useState } from 'react'
+import useSWR from "swr";
+import React from 'react'
 
 export default  function IncomeExpenses() {
-  const [income , setIncome]=useState(0);
-  const [expenses , setExpenses]=useState(0);
-
-   
-      const getinfo=async()=>{
-        try {
-          const res=await fetch('/api/getIncomeExpenses',{
-              method:'GET',
-             })
-            
-          
-             if (res.ok) {
-              const responseData = await res.json(); 
-              setExpenses(Math.abs(responseData.expenses))
-              setIncome(responseData.income);
-              console.log(responseData.message);
-            } else {
-              const errorData = await res.json();
-              console.log(errorData.message || "Something went wrong");
-            }
   
-        } catch (error) {
-          console.log("Internal Server Error!!")
-        }
-      }
-
-      useEffect(()=>{
-        getinfo();
-      },[])
-
+  const fetcher = (url) => fetch(url).then((res) => res.json());
+  const { data, mutate } = useSWR("/api/getIncomeExpenses", fetcher);
+ 
   return (
     <div className='inc-exp-container'>
        <div>
         <h4>Income</h4>
-        <p className='money plus'>${addCommas(Number(income?.toFixed(2)))}</p>
+        <p className='money plus'>${addCommas(Number( data?.income?.toFixed(2) ?? 0))}</p>
         </div>
       <div>
         <h4>Expense</h4>
-        <p className='money minus'>${addCommas(Number(expenses?.toFixed(2)))}</p>
+        <p className='money minus'>${addCommas(Number( data?.expenses?.toFixed(2) ?? 0))}</p>
       </div>
     </div>
-
   )
 }

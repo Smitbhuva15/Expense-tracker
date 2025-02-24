@@ -1,5 +1,6 @@
 import prisma from '@/db';
 import { currentUser } from '@clerk/nextjs/server';
+import { revalidatePath } from 'next/cache';
 import { NextResponse } from 'next/server';
 import React, { use } from 'react'
 
@@ -18,7 +19,7 @@ export async function POST(req) {
          userId:user.id
        }
     })
-
+        revalidatePath('/');
       return  NextResponse.json({ message: "Transaction successFull !!" }, { status: 200 })
     
    } catch (error) {

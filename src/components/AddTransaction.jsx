@@ -1,11 +1,15 @@
 "use client"
 import { currentUser } from '@clerk/nextjs/server';
+import { useRouter } from 'next/navigation';
 import React from 'react'
 import { useForm } from "react-hook-form";
 import toast from 'react-hot-toast';
+import { useSWRConfig } from 'swr';
 
 export default function AddTransaction() {
-  
+  const { mutate } = useSWRConfig(); 
+
+  const router=useRouter()
     const { register, handleSubmit, watch, reset, formState: { errors } } = useForm();
     const onSubmit =async (data) =>{
       try {
@@ -22,6 +26,9 @@ export default function AddTransaction() {
             const responseData = await res.json(); 
             reset();
             toast.success(responseData.message);
+            mutate('/api/getIncomeExpenses')
+            mutate('/api/gettotalbalance')
+            mutate('/api/allTransaction')
           } else {
             const errorData = await res.json();
             toast.error(errorData.message || "Something went wrong");
