@@ -1,9 +1,18 @@
+import AddTransaction from "@/components/AddTransaction";
+import Guest from "@/components/Guest";
+import { currentUser } from "@clerk/nextjs/server";
 import Image from "next/image";
 
-export default function Home() {
+export default async function Home() {
+  const user=await currentUser();
+  if(!user){
+    return <Guest/>
+  }
+
   return (
-  <div>
-    <h1 className="text-3xl ml-3 mt-3">Expenses Tracker</h1>
-  </div>
+    <main>
+    <h1 className="text-3xl">{`welcome ${user?.firstName}`}</h1>
+    <AddTransaction />
+  </main>
   );
 }

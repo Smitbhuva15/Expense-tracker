@@ -13,3 +13,27 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+
+model User{
+  id String @id @default(uuid())
+  clerkUserId String  @unique
+  email String @unique
+  name String?
+  imageUrl String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  transactions Transaction[]
+
+}
+
+model Transaction{
+  id  String @id @default(uuid())
+  userId  String
+  user User @relation(fields: [userId], references: [clerkUserId], onDelete: Cascade)
+  text String
+  amount Float
+  
+  createdAt DateTime @default(now())
+  @@index([userId])
+}
