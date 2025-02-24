@@ -6,25 +6,30 @@ import toast from 'react-hot-toast';
 
 export default function AddTransaction() {
   
-    const { register, handleSubmit, watch, formState: { errors } } = useForm();
+    const { register, handleSubmit, watch, reset, formState: { errors } } = useForm();
     const onSubmit =async (data) =>{
       try {
         const res=await fetch('/api/addTransaction',{
             method:'POST',
             headers:{
-                'Context-Type':'application/json'
+                "Content-Type": "application/json",
             },
             body:JSON.stringify(data)
            })
-           console.log(res)
+          
     
-           if(res.ok){
-            const data=await res.json();
-            toast.success(data.message)
-           }
+           if (res.ok) {
+            const responseData = await res.json(); 
+            reset();
+            toast.success(responseData.message);
+          } else {
+            const errorData = await res.json();
+            toast.error(errorData.message || "Something went wrong");
+          }
+
       } catch (error) {
-        const errdata=await res.json();
-        toast.error(errdata.message)
+        toast.error("Internal Server Error!!")
+         
       }
 
     } 
